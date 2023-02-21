@@ -1,0 +1,104 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: portal
+  namespace: odh
+  labels:
+    app: portal
+    app.kubernetes.io/part-of: portal
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: portal
+    app.kubernetes.io/part-of: portal
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: portal
+  namespace: odh
+  labels:
+    app: portal
+    app.kubernetes.io/part-of: portal
+spec:
+  to:
+    kind: Service
+    name: portal
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+  wildcardPolicy: None
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: portal
+  namespace: odh
+  labels:
+    app: portal
+    app.kubernetes.io/part-of: portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portal
+      app.kubernetes.io/part-of: portal
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: portal
+        app.kubernetes.io/part-of: portal
+    spec:
+      containers:
+        - name: portal
+          image: 'quay.io/redhat-emea-ssa-team/username-distribution:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: LAB_REDIS_HOST
+              value: redis
+            - name: LAB_REDIS_PASS
+              value: redis
+            - name: LAB_TITLE
+              value: OpenShift Object Detection Workshops
+            - name: LAB_DURATION_HOURS
+              value: 1week
+            - name: LAB_USER_COUNT
+              value: '40'
+            - name: LAB_USER_ACCESS_TOKEN
+              value: openshift
+            - name: LAB_USER_PASS
+              value: openshift
+            - name: LAB_USER_PREFIX
+              value: user
+            - name: LAB_USER_PAD_ZERO
+              value: 'false'
+            - name: LAB_ADMIN_PASS
+              value: r3dh4t1!
+            - name: LAB_MODULE_URLS
+              value:  https://alexgroom.github.io/rhods-od-workshop/rhods-od-workshop/index.html;Lab Guide,https://odh-dashboard-odh.apps.cluster-gclg9.gclg9.sandbox735.opentlc.com/;Lab Login
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
