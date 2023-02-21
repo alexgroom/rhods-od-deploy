@@ -1,0 +1,131 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: odh
+  labels:
+    app: redis
+    app.kubernetes.io/part-of: portal
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: redis
+    app.kubernetes.io/part-of: portal
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: odh
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    app: redis
+    app.kubernetes.io/part-of: portal
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 512Mi
+  storageClassName: gp3-csi
+  volumeMode: Filesystem
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: odh
+  labels:
+    app: redis
+    app.kubernetes.io/part-of: portal
+data:
+  database-password: cmVkaXM=
+type: Opaque
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: redis
+  namespace: odh
+  labels:
+    app: redis
+    app.kubernetes.io/part-of: portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      app.kubernetes.io/part-of: portal
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: redis
+        app.kubernetes.io/part-of: portal
+    spec:
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis
+      containers:
+        - resources:
+            limits:
+              memory: 512Mi
+            requests:
+              memory: 512Mi
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - '-i'
+                - '-c'
+                - >-
+                  test "$(redis-cli -h 127.0.0.1 -a $REDIS_PASSWORD ping)" ==
+                  "PONG"
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 10
+          terminationMessagePath: /dev/termination-log
+          name: redis
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: database-password
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: redis-data
+              mountPath: /var/lib/redis/data
+          terminationMessagePolicy: File
+          image: 'image-registry.openshift-image-registry.svc:5000/openshift/redis'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
