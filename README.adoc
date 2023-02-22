@@ -1,18 +1,83 @@
-== Instructions for deploy Object detcetion workshop
+== Instructions for deploying Data Science Object detcetion workshop
 
 === Request RHPDS cluster
-4.12
+
+OpenShift 4.12
+
 === Install Red Hat OpenShift Data Science 
-via operator
+
+via RHODS operator
+
 === Limit Ranges
-Modify limitranges set on notebook project 8Gi conatiner and 14Gi Pod memory
+
+Modify limitranges set on notebook project: 8Gi conatiner and 14Gi Pod memory
+
+[source,bash]
+----
+kind: LimitRange
+apiVersion: v1
+metadata:
+  name: rhods-notebooks-core-resource-limits
+  namespace: rhods-notebooks
+spec:
+  limits:
+    - type: Container
+      max:
+        cpu: '4'
+        memory: 8Gi
+      default:
+        cpu: 500m
+        memory: 1536Mi
+      defaultRequest:
+        cpu: 50m
+        memory: 256Mi
+    - type: Pod
+      max:
+        cpu: '4'
+        memory: 14Gi
+----
+
 === Create users and projects
+
 Merge existing htpasswd file with supplied, this create a user community of userN 1..N
+
+[source,bash]
+----
+./updatehtpasswd.sh
+----
+
 Create projects for each user in their name
+
+[source,bash]
+----
+./createProject.sh <cluster API URL>
+----
+
 ===Install portal tool for user mapping
+
 Create ods-portal project
+
+[source,bash]
+----
+oc new-project ods-portal
+----
+
 Install user selection tool (redis/portal)
+
+[source,bash]
+----
+oc apply -f redis-deploy.yaml
+----
+
 Update local route to rhods notebooks
+
+[source,bash]
+----
+oc apply -f portal-deploy.yaml
+----
+
 === Scale cluster
+
 Extend cluster nodes according to expected load. 25 users approax 6 worker nodes
+
 === Test
