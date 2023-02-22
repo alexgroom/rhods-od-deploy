@@ -1,4 +1,4 @@
-== Instructions for deploying Data Science Object detcetion workshop
+== Instructions for deploying Data Science Object Detection workshop
 
 === Request RHPDS cluster
 
@@ -78,6 +78,6 @@ oc apply -f portal-deploy.yaml
 
 === Scale cluster
 
-Extend cluster nodes according to expected load. 25 users approax 6 worker nodes
+Extend cluster nodes according to expected load. 25 users approx 6 worker nodes
 
 === Test
