@@ -68,7 +68,7 @@ spec:
             - name: LAB_REDIS_PASS
               value: redis
             - name: LAB_TITLE
-              value: OpenShift Object Detection Workshops
+              value: OpenShift Data Science Object Detection Workshop
             - name: LAB_DURATION_HOURS
               value: 1week
             - name: LAB_USER_COUNT

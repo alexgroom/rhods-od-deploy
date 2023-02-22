@@ -10,7 +10,9 @@ Modify limitranges set on notebook project 8Gi conatiner and 14Gi Pod memory
 Merge existing htpasswd file with supplied, this create a user community of userN 1..N
 Create projects for each user in their name
 ===Install portal tool for user mapping
+Create ods-portal project
 Install user selection tool (redis/portal)
+Update local route to rhods notebooks
 === Scale cluster
 Extend cluster nodes according to expected load. 25 users approax 6 worker nodes
 === Test
