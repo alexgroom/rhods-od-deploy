@@ -2,7 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: portal
-  namespace: odh
+  namespace: ods-portal
   labels:
     app: portal
     app.kubernetes.io/part-of: portal
@@ -20,7 +20,7 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: portal
-  namespace: odh
+  namespace: ods-portal
   labels:
     app: portal
     app.kubernetes.io/part-of: portal
@@ -39,7 +39,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: portal
-  namespace: odh
+  namespace: ods-portal
   labels:
     app: portal
     app.kubernetes.io/part-of: portal

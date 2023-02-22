@@ -1,0 +1,16 @@
+== Instructions for deploy Object detcetion workshop
+
+=== Request RHPDS cluster
+4.12
+=== Install Red Hat OpenShift Data Science 
+via operator
+=== Limit Ranges
+Modify limitranges set on notebook project 8Gi conatiner and 14Gi Pod memory
+=== Create users and projects
+Merge existing htpasswd file with supplied, this create a user community of userN 1..N
+Create projects for each user in their name
+===Install portal tool for user mapping
+Install user selection tool (redis/portal)
+=== Scale cluster
+Extend cluster nodes according to expected load. 25 users approax 6 worker nodes
+=== Test

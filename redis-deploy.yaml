@@ -2,7 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: redis
-  namespace: odh
+  namespace: ods-portal
   labels:
     app: redis
     app.kubernetes.io/part-of: portal
@@ -20,7 +20,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: redis
-  namespace: odh
+  namespace: ods-portal
   finalizers:
     - kubernetes.io/pvc-protection
   labels:
@@ -39,7 +39,7 @@ kind: Secret
 apiVersion: v1
 metadata:
   name: redis
-  namespace: odh
+  namespace: ods-portal
   labels:
     app: redis
     app.kubernetes.io/part-of: portal
@@ -51,7 +51,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: redis
-  namespace: odh
+  namespace: ods-portal
   labels:
     app: redis
     app.kubernetes.io/part-of: portal
