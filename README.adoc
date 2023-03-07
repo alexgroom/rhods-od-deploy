@@ -39,10 +39,12 @@ spec:
 
 === Create users and projects
 
-Merge existing htpasswd file with supplied, this create a user community of userN 1..N
+Merge existing htpasswd file with supplied, this create a user community of userN 1..N. 
+Drop down into the htpasswd directory where the password updater is located.
 
 [source,bash]
 ----
+cd htpasswd
 ./updatehtpasswd.sh
 ----
 
@@ -55,10 +57,11 @@ Create projects for each user in their name
 
 ===Install portal tool for user mapping
 
-Create ods-portal project
+Come up a directory level and create ods-portal project
 
 [source,bash]
 ----
+cd ..
 oc new-project ods-portal
 ----
 
@@ -75,6 +78,10 @@ Update local route to rhods notebooks
 ----
 oc apply -f portal-deploy.yaml
 ----
+
+Update the long and ugly LAB_MODULE_URLS environment variable in the portal application. This single string
+contains both the lab guide and RHODS dashboard URL. Once you know the route of the 
+rhods ods dashboard edit the second URL value. It will look a little like this: *https://rhods-dashboard-redhat-ods-applications.apps.cluster...*
 
 === Scale cluster
 
